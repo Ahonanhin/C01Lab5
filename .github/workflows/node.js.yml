@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: Backend test with MongoDB
+    name: Backend test 
     runs-on: ubuntu-latest
 
     services:
