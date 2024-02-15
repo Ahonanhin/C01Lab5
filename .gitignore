@@ -1,0 +1,13 @@
+# CSCC01 Lab 4
+
+# dependencies
+node_modules/
+
+# database
+*/data
+
+# misc
+.DS_Store
+
+# Ignore MongoDB data files
+quirknotes/backend/data/db/
