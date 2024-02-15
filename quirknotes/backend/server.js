@@ -44,7 +44,7 @@ app.get("/getAllNotes", express.json(), async (req, res) => {
     // Find notes with username attached to them
     const collection = db.collection(COLLECTIONS.notes);
     const data = await collection.find().toArray();
-    res.json({ response: [] });
+    res.json({ response: data });
   } catch (error) {
     res.status(500).json({error: error.message})
   }
@@ -95,12 +95,12 @@ app.delete("/deleteNote/:noteId", express.json(), async (req, res) => {
       _id: new ObjectId(noteId),
     });
 
-
     if (data.deletedCount === 0) {
       return res
         .status(404)
         .json({ error: "Unable to find note with given ID." });
     }
+    
     res.json({ response: `Document with ID ${noteId} deleted.` });
   } catch (error) {
     res.status(500).json({ error: error.message });
