@@ -5,29 +5,43 @@ name: Node.js CI
 
 on:
   push:
-      branches: ["main"]
-  pull_request: 
-        branches: ["main", "dev"]
+    branches: ["main"]
+  pull_request:
+    branches: ["main", "dev"]
 
 jobs:
-    build:
-        name: Backend test
-        runs-on: ubuntu-latest
+  build:
+    name: Backend test with MongoDB
+    runs-on: ubuntu-latest
 
-        defaults:
-            run:
-                working-directory: ./quirknotes/backend
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: --health-cmd "mongo --eval 'db.runCommand({ping: 1})'" --health-interval 10s --health-timeout 5s --health-retries 5
 
-        strategy:
-            matrix:
-                node-version: [20.x]
+    defaults:
+      run:
+        working-directory: ./quirknotes/backend
 
-        steps:
-            - uses: actions/checkout@v3
+    strategy:
+      matrix:
+        node-version: [20.x]
 
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v3
-              with:
-                node-version: ${{ matrix.node-version }}
-            - run: npm i
-            - run: npm test
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Start server in background
+        run: nohup node server.js &
+
+      - name: Run tests
+        run: npm test
